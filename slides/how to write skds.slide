@@ -1,0 +1,36 @@
+How to write SKDs
+Concerns & Solutions
+14 Jul 2018
+Tags: SDK, Library, Howto
+
+Tobias Kommerell
+t.kommerell@hotmail.com
+@schinkenstrudel
+
+* Concerns when building SKDs
+- reduce the effort to use a tool
+    you can't just _import_ a tool, but you can import the SDK
+    using the SDK should provide a benefit over directly using the API over a standard protocol
+- don't reduce the ways in which a tool can be used
+    like a go package a tool should do one thing only and do it well, 
+- an SDK shouldn't impose any constraints on the applications using it
+- an
+
+
+* http Client
+** Proctol Clients
+- possibility 1: Use default client ` http.DefaultClient `
+- possibility 2: Use your own http.Client
+- possibility 3: Let the application inject the http.Client
+
+* Connection Managment
+** Proctol Clients
+- pool connections
+- expose single connections
+- why not both?
+
+* Timeouts
+** Proctol Clients
+- fixed Timeouts
+    what's a sensible timeout?
+- Timeout per request type
