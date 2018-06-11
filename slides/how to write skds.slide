@@ -34,3 +34,6 @@ t.kommerell@hotmail.com
 - fixed Timeouts
     what's a sensible timeout?
 - Timeout per request type
+
+* Undoing The API
+- extract "status" and "error" fields to error return values
