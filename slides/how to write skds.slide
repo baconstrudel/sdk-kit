@@ -66,6 +66,11 @@ t.kommerell@hotmail.com
 - expose single worker
 - why not both?
 
+*API Limits
+** Resource Management
+- most API documentations have a section on how to avoid hitting limits, most people never read them
+- with a well-designed SDK you can nudge people into making fewer requests
+
 * io
 ** Resource Managment
 - benchmark everything involving buffers or io.Pipe()
@@ -77,6 +82,7 @@ forget to close response bodies
 .link https://github.com/dkerwin/gini-api-go/blob/master/document.go#L166 close `nil` response bodies
 .link https://github.com/xanzy/go-gitlab/blob/master/repositories.go#L59 return empty results for no
 .link https://github.com/alphazero/Go-Redis/blob/go1/redis.go#L114 huge interfaces
-- no list of errors
-- use of http.Roundtripper for authentication
-- no timeout for requests by default and timeout not configurable
+no list of errors
+use of http.Roundtripper for authentication
+no timeout for requests by default and timeout not configurable
+overuse `interface{}`
