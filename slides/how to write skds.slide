@@ -7,27 +7,46 @@ Tobias Kommerell
 t.kommerell@hotmail.com
 @schinkenstrudel
 
-* Concerns when building SKDs
-- reduce the effort to use a tool
-    you can't just _import_ a tool, but you can import the SDK
-    using the SDK should provide a benefit over directly using the API over a standard protocol
-- don't reduce the ways in which a tool can be used
-    like a go package a tool should do one thing only and do it well, 
-- an SDK shouldn't impose any constraints on the applications using it
-- an
+* What are SKDs?
+** Introduction
+    - SDKs help to use APIs
+    - There are SDKs for
+        - Services (REST, SOAP)
+        - Databases
+        - Platforms
+        - Operating Systems
 
+* Concerns when building SKDs
+** Introduction
+    - reduce the effort to use a tool
+        - you can't just import some tools, but you can import the SDK
+        - using the SDK should provide a benefit over directly using the API over a standard protocol
+    - don't reduce the ways in which a tool can be used
+        - like any other go package a tool should do one thing only and do it well
+        - an SDK should not force you to adopt specific ways of handling dependencies, logging, etc.
+    - an SDK shouldn't impose any constraints on the applications using it
+
+* Concerns of the application using the SDK
+** Introduction
+    - developers need observability (logging, tracing, metrics, profiling)
+    - developers need tests
+    - developers want applications to be fast without consuming infinite memory
+    - developers don't want to have to read lots of documentation
+
+* Undoing The API
+** Undoing the API
+- extract "status" and "error" fields to error return values, if appropriate
+- retrying requests caused by transport failure
+- transform untyped payload into typed response object
 
 * http Client
 ** Proctol Clients
-- possibility 1: Use default client ` http.DefaultClient `
+- possibility 1: Use default client `http.DefaultClient`
 - possibility 2: Use your own http.Client
 - possibility 3: Let the application inject the http.Client
+    it's easy to inject the default Client, or a special Client
 
-* Connection Managment
-** Proctol Clients
-- pool connections
-- expose single connections
-- why not both?
+.link https://github.com/xanzy/go-gitlab/blob/master/gitlab.go#L350 example
 
 * Timeouts
 ** Proctol Clients
@@ -35,5 +54,8 @@ t.kommerell@hotmail.com
     what's a sensible timeout?
 - Timeout per request type
 
-* Undoing The API
-- extract "status" and "error" fields to error return values
+* Resource Managment
+** Proctol Clients
+- pool connections, buffers, ...
+- expose single worker
+- why not both?
