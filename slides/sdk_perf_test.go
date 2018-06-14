@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"io"
-	"net/http"
+	"io/ioutil"
 	"sync"
 	"testing"
 
@@ -39,12 +39,13 @@ func BenchmarkPipe(b *testing.B) {
 
 				go func() {
 					defer pw.Close()
-					json.NewEncoder(pw).Encode(benchcase.ts)
+					err := json.NewEncoder(pw).Encode(benchcase.ts)
+					assert.NoError(b, err)
 					wg.Done()
 				}()
-				http.Post("http://localhost:9999", "text", pr)
+				_, err := io.Copy(ioutil.Discard, pr)
+				assert.NoError(b, err)
 				wg.Wait()
-
 			}
 		})
 		b.Run("using buffer "+benchcase.Name, func(b *testing.B) {
@@ -52,6 +53,7 @@ func BenchmarkPipe(b *testing.B) {
 				buf := bytes.Buffer{}
 				err := json.NewEncoder(&buf).Encode(benchcase.ts)
 				assert.NoError(b, err)
+				io.Copy(ioutil.Discard, &buf)
 			}
 		})
 		b.Run("using pooled buffer "+benchcase.Name, func(b *testing.B) {
@@ -60,10 +62,11 @@ func BenchmarkPipe(b *testing.B) {
 					return new(bytes.Buffer)
 				},
 			}
-			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
 				buf := pool.Get().(*bytes.Buffer)
 				err := json.NewEncoder(buf).Encode(benchcase.ts)
+				assert.NoError(b, err)
+				_, err = io.Copy(ioutil.Discard, buf)
 				assert.NoError(b, err)
 				buf.Reset()
 				pool.Put(buf)
