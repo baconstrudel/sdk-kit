@@ -34,10 +34,16 @@ t.kommerell@hotmail.com
     - developers don't want to have to read lots of documentation
 
 * Undoing The API
-** Undoing the API
+** SDK Design
 - extract "status" and "error" fields to error return values, if appropriate
 - retrying requests caused by transport failure
 - transform untyped payload into typed response object
+
+* observability
+** SDK Design
+- most SDKs should not log anything, applications should log outside of SDK invocations
+- for metrics use profiling or a very light metrics Library
+- you can allow users to enable tracing via functional configuration of ...
 
 * http Client
 ** Proctol Clients
@@ -45,17 +51,32 @@ t.kommerell@hotmail.com
 - possibility 2: Use your own http.Client
 - possibility 3: Let the application inject the http.Client
     it's easy to inject the default Client, or a special Client
-
 .link https://github.com/xanzy/go-gitlab/blob/master/gitlab.go#L350 example
 
 * Timeouts
 ** Proctol Clients
-- fixed Timeouts
-    what's a sensible timeout?
-- Timeout per request type
+- fixed Timeouts but what's a sensible timeout?
+- Do you need Timeout per request type?
 
-* Resource Managment
-** Proctol Clients
+.link https://blog.golang.org/context
+
+* Connections
+** Resource Management
 - pool connections, buffers, ...
 - expose single worker
 - why not both?
+
+* io
+** Resource Managment
+- benchmark everything involving buffers or io.Pipe()
+- use sync.Pools
+
+* Big no-nos
+** One last thing
+forget to close response bodies
+.link https://github.com/dkerwin/gini-api-go/blob/master/document.go#L166 close `nil` response bodies
+.link https://github.com/xanzy/go-gitlab/blob/master/repositories.go#L59 return empty results for no
+.link https://github.com/alphazero/Go-Redis/blob/go1/redis.go#L114 huge interfaces
+- no list of errors
+- use of http.Roundtripper for authentication
+- no timeout for requests by default and timeout not configurable

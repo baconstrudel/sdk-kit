@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"sync"
 	"testing"
+	"encoding/hex"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +28,7 @@ func BenchmarkPipe(b *testing.B) {
 		{"tiny", TestStruct{"f", "b"}},
 		{"short", TestStruct{"foo", "bar"}},
 		{"mid", TestStruct{"123467890123467890123467890", "123467890123467890123467890"}},
-		{"long", TestStruct{"f", longStringBuf.String()}},
+		{"long", TestStruct{"f", hex.EncodeToString(longStringBuf.Bytes())}},
 	}
 
 	for _, benchcase := range testdata {
@@ -53,7 +54,8 @@ func BenchmarkPipe(b *testing.B) {
 				buf := bytes.Buffer{}
 				err := json.NewEncoder(&buf).Encode(benchcase.ts)
 				assert.NoError(b, err)
-				io.Copy(ioutil.Discard, &buf)
+				_, err = io.Copy(ioutil.Discard, &buf)
+				assert.NoError(b, err)
 			}
 		})
 		b.Run("using pooled buffer "+benchcase.Name, func(b *testing.B) {
